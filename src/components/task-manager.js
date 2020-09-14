@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import ProgressBar from 'react-progressbar'
 
 import useInterval from '../hooks/use-interval'
 
@@ -6,9 +7,14 @@ function checkIfIdle(server) {
   return server.task === null
 }
 
+function random() {
+  // generate random number between 1 to 100
+  return Math.floor(Math.random() * 100) + 1
+}
+
 function createTask() {
   return {
-    id: Date.now(),
+    id: Date.now() + random(),
     completed: 0,
   }
 }
@@ -64,11 +70,15 @@ function TaskManager() {
   }
 
   function addTasks() {
-    const tasks = Array(noOfTasks).map(() => {
-      return createTask()
-    })
+    const tasks = Array(Number(noOfTasks))
+      .fill(1)
+      .map(() => {
+        return createTask()
+      })
 
-    setPendingTasks([...tasks])
+    console.log({ tasks })
+
+    setPendingTasks(tasks)
   }
 
   useInterval(() => {}, 1000)
@@ -100,8 +110,19 @@ function TaskManager() {
       </div>
 
       <div style={{ marginLeft: 100 }}>
-        <input type="number" placeholder="Type # of tasks" value={noOfTasks} onChange={handleInputChange} />
-        <button onClick={addTasks}>Add tasks</button>
+        <div>
+          <h3>Pending tasks</h3>
+          {pendingTasks.map((task) => (
+            <div style={{ backgroundColor: '#ccc', marginTop: 8, marginBottom: 8 }}>
+              <ProgressBar key={task.id} completed={task.completed} height={20} />
+            </div>
+          ))}
+        </div>
+
+        <div>
+          <input type="number" placeholder="Type # of tasks" value={noOfTasks} onChange={handleInputChange} />
+          <button onClick={addTasks}>Add tasks</button>
+        </div>
       </div>
     </div>
   )
